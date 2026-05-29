@@ -9,6 +9,8 @@ if the value reached the node. Param Studio **reads every value back after
 writing it** and shows a clear per-parameter verdict — confirmed, clamped,
 rejected, or no-response — with the round-trip time.
 
+![Param Studio](studio_screenshot.png)
+
 ## Features
 
 - **Any node, auto-generated UI.** Reads each node's parameter *descriptors*, so
