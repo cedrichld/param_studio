@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Param Studio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎛️</text></svg>">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">P</div>
+      <div>Param Studio<br><small>live tuning · read-back confirmed</small></div>
+    </div>
+    <div class="spacer"></div>
+    <label class="muted" style="font-size:12px">node</label>
+    <select id="node-select"><option>loading…</option></select>
+    <button class="btn" id="btn-reload" title="Reload params (r)">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+      Reload
+    </button>
+    <div class="health" id="health" title="connection to the selected node">
+      <span class="dot" id="health-dot"></span>
+      <span id="health-text">—</span>
+      <span class="rtt" id="health-rtt"></span>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="search">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
+      <input class="input" id="search" type="text" placeholder="Search params by name or description…  (/ to focus)" autocomplete="off">
+      <span class="count" id="search-count"></span>
+    </div>
+    <button class="btn" id="btn-expand" title="Expand / collapse all groups">Collapse all</button>
+    <button class="btn" id="btn-snapshot" title="Save all current params to a YAML profile">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
+      Snapshot
+    </button>
+    <button class="btn" id="btn-restore" title="Restore params from a saved profile">Restore…</button>
+    <button class="btn" id="btn-diff" title="Compare live params against a saved profile">Diff…</button>
+  </div>
+
+  <div class="banner live-off" id="banner-live">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg>
+    <span><b>live_tuning_enabled = false</b> — sets are stored on the node but the controller won't use them until you turn live tuning on.</span>
+  </div>
+
+  <main id="params"><div class="placeholder"><div class="big">Select a node to begin</div><div>Its parameters will appear here.</div></div></main>
+
+  <div id="toasts"></div>
+
+  <!-- Restore modal -->
+  <div class="modal-bg" id="modal-restore">
+    <div class="modal">
+      <h3>Restore from profile <button class="close" data-close>×</button></h3>
+      <div class="body">
+        <p class="muted" style="margin-top:0">Pick a saved profile or browse to any YAML. Read-only params are skipped; every write is confirmed by read-back.</p>
+        <div class="browse-row">
+          <span class="muted mono" id="restore-dir"></span>
+          <button class="btn" id="restore-browse" title="Open a YAML from anywhere on disk">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Browse…
+          </button>
+          <input type="file" id="restore-file-input" accept=".yaml,.yml" hidden>
+        </div>
+        <div class="file-list" id="restore-files"></div>
+        <div id="restore-result" style="margin-top:14px"></div>
+      </div>
+      <div class="foot">
+        <button class="btn" data-close>Cancel</button>
+        <button class="btn primary" id="btn-do-restore" disabled>Restore selected</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diff modal -->
+  <div class="modal-bg" id="modal-diff">
+    <div class="modal">
+      <h3>Diff vs profile <button class="close" data-close>×</button></h3>
+      <div class="body">
+        <div class="browse-row">
+          <span class="muted mono" id="diff-dir"></span>
+          <button class="btn" id="diff-browse" title="Open a YAML from anywhere on disk">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Browse…
+          </button>
+          <input type="file" id="diff-file-input" accept=".yaml,.yml" hidden>
+        </div>
+        <div class="file-list" id="diff-files"></div>
+        <div id="diff-result" style="margin-top:14px"></div>
+      </div>
+      <div class="foot"><button class="btn" data-close>Close</button></div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
