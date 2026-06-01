@@ -144,7 +144,7 @@ MPPI_GROUPS = [
         "state_predictor", "n_samples", "n_steps", "sim_time_step",
         "random_seed", "render"]),
     ("MPPI solver", [
-        "temperature", "init_vel", "startup_speed", "friction"]),
+        "temperature", "init_vel", "startup_speed", "friction", "n_iterations"]),
     ("Exploration", [
         "control_sample_std_steer", "control_sample_std_accel",
         "steer_vel_scale", "accel_scale"]),
@@ -162,7 +162,9 @@ MPPI_GROUPS = [
         "opponent_cost_radius", "opponent_cost_power", "opponent_cost_discount",
         "opponent_path_timeout", "opponent_behavior_mode",
         "opponent_follow_weight", "opponent_follow_distance",
-        "opponent_same_lane_width"]),
+        "opponent_same_lane_width",
+        "opponent_auto_exit_closing_speed", "opponent_auto_exit_wall_clearance",
+        "opponent_auto_min_commit_sec", "opponent_auto_pass_cooldown_sec"]),
     ("Opponent passing", [
         "opponent_pass_weight", "opponent_pass_lateral_offset",
         "opponent_pass_longitudinal_window", "opponent_auto_wall_check_enabled",
